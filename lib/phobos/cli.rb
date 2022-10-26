@@ -4,7 +4,6 @@ require 'thor'
 require 'phobos/cli/start'
 
 module Phobos
-  # @!visibility private
   module CLI
     def self.logger
       @logger ||= Logging.logger[self].tap do |l|
@@ -12,7 +11,6 @@ module Phobos
       end
     end
 
-    # @!visibility private
     class Commands < Thor
       include Thor::Actions
 

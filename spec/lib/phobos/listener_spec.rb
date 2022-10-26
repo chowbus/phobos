@@ -58,9 +58,6 @@ RSpec.describe Phobos::Listener do
   let(:thread) do
     Thread.new { listener.start }.tap { |t| t.abort_on_exception = true }
   end
-  let(:exception_thread) do
-    Thread.new { expect { listener.start }.to raise_error(Kafka::ProcessingError) }
-  end
 
   before do
     create_topic(topic)
@@ -357,7 +354,7 @@ RSpec.describe Phobos::Listener do
   end
 
   it 'aborts retry when handler is shutting down' do
-    subscribe_to(*LISTENER_EVENTS) { exception_thread }
+    subscribe_to(*LISTENER_EVENTS) { thread }
     wait_for_event('listener.start')
 
     # Ensuring the listener will have a high wait
@@ -377,7 +374,7 @@ RSpec.describe Phobos::Listener do
 
     # Something external will manage the listener thread,
     # calling wakeup manually to simulate this entity stop call
-    exception_thread.wakeup
+    thread.wakeup
     wait_for_event('listener.retry_aborted')
     wait_for_event('listener.stop')
     expect(events_for('listener.retry_aborted').size).to eql 1
