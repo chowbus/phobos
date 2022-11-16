@@ -118,9 +118,8 @@ module Phobos
         ERB.new(
           File.read(File.expand_path(configuration))
         ).result,
-        [Symbol],
-        [],
-        true
+        permitted_classes: [Symbol],
+        aliases: true
       )
     end
 
